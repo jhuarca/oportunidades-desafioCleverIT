@@ -1,0 +1,476 @@
+{
+	"info": {
+		"_postman_id": "4169d4be-a13b-4ef5-9332-54a233d5a446",
+		"name": "Ejercicio 2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Validación de los datos de los usuarios",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Definición del esquema de la respuesta -> https://app.quicktype.io/\r",
+							"var schemaRespuesta = {\r",
+							"    \"$schema\": \"http://json-schema.org/draft-06/schema#\",\r",
+							"    \"type\": \"array\",\r",
+							"    \"items\": {\r",
+							"        \"$ref\": \"#/definitions/WelcomeElement\"\r",
+							"    },\r",
+							"    \"definitions\": {\r",
+							"        \"WelcomeElement\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"additionalProperties\": false,\r",
+							"            \"properties\": {\r",
+							"                \"id\": {\r",
+							"                    \"type\": \"integer\"\r",
+							"                },\r",
+							"                \"name\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"username\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"email\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"address\": {\r",
+							"                    \"$ref\": \"#/definitions/Address\"\r",
+							"                },\r",
+							"                \"phone\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"website\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"company\": {\r",
+							"                    \"$ref\": \"#/definitions/Company\"\r",
+							"                }\r",
+							"            },\r",
+							"            \"required\": [\r",
+							"                \"address\",\r",
+							"                \"company\",\r",
+							"                \"email\",\r",
+							"                \"id\",\r",
+							"                \"name\",\r",
+							"                \"phone\",\r",
+							"                \"username\",\r",
+							"                \"website\"\r",
+							"            ],\r",
+							"            \"title\": \"WelcomeElement\"\r",
+							"        },\r",
+							"        \"Address\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"additionalProperties\": false,\r",
+							"            \"properties\": {\r",
+							"                \"street\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"suite\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"city\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"zipcode\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"geo\": {\r",
+							"                    \"$ref\": \"#/definitions/Geo\"\r",
+							"                }\r",
+							"            },\r",
+							"            \"required\": [\r",
+							"                \"city\",\r",
+							"                \"geo\",\r",
+							"                \"street\",\r",
+							"                \"suite\",\r",
+							"                \"zipcode\"\r",
+							"            ],\r",
+							"            \"title\": \"Address\"\r",
+							"        },\r",
+							"        \"Geo\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"additionalProperties\": false,\r",
+							"            \"properties\": {\r",
+							"                \"lat\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"lng\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                }\r",
+							"            },\r",
+							"            \"required\": [\r",
+							"                \"lat\",\r",
+							"                \"lng\"\r",
+							"            ],\r",
+							"            \"title\": \"Geo\"\r",
+							"        },\r",
+							"        \"Company\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"additionalProperties\": false,\r",
+							"            \"properties\": {\r",
+							"                \"name\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"catchPhrase\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"bs\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                }\r",
+							"            },\r",
+							"            \"required\": [\r",
+							"                \"bs\",\r",
+							"                \"catchPhrase\",\r",
+							"                \"name\"\r",
+							"            ],\r",
+							"            \"title\": \"Company\"\r",
+							"        }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"//Obtención de la respuesta\r",
+							"var jsonData = pm.response;\r",
+							"\r",
+							"//Validación del código de respuesta\r",
+							"pm.test(\"Se completó la obtención de la respuesta\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//Validaciones aplicadas si se obtiene la respuesta completa\r",
+							"if(jsonData.code === 200){\r",
+							"\r",
+							"    //Validar cantidad de registros\r",
+							"    pm.test(\"El resultado devuelve 10 registros\", () => {\r",
+							"        pm.expect(jsonData.json().length).to.be.equals(10);\r",
+							"    });\r",
+							"\r",
+							"    //Validación de datos y estructura del resultado\r",
+							"    pm.test('Los registros devueltos tienen la estructura y los datos correctos', function() {\r",
+							"        pm.expect(tv4.validate(jsonData.json(), schemaRespuesta)).to.be.true;\r",
+							"    });\r",
+							"\r",
+							"    //Validación del formato de correo electrónico\r",
+							"    pm.test(\"Todos los correos electrónicos tienen formatos válidos\", function () {\r",
+							"        for(var i=0; i<jsonData.json().length; i++){\r",
+							"            pm.expect(jsonData.json()[i].email).to.match(/^\\S+@\\S+\\.\\S+$/);\r",
+							"        }\r",
+							"    });\r",
+							"\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"METODO\", \"users\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_URL}}/{{METODO}}",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"{{METODO}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validación de los datos de los posts",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"METODO\", \"posts\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Definición del esquema de la respuesta -> https://app.quicktype.io/\r",
+							"var schemaRespuesta = {\r",
+							"    \"$schema\": \"http://json-schema.org/draft-06/schema#\",\r",
+							"    \"type\": \"array\",\r",
+							"    \"items\": {\r",
+							"        \"$ref\": \"#/definitions/WelcomeElement\"\r",
+							"    },\r",
+							"    \"definitions\": {\r",
+							"        \"WelcomeElement\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"additionalProperties\": false,\r",
+							"            \"properties\": {\r",
+							"                \"userId\": {\r",
+							"                    \"type\": \"integer\"\r",
+							"                },\r",
+							"                \"id\": {\r",
+							"                    \"type\": \"integer\"\r",
+							"                },\r",
+							"                \"title\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"body\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                }\r",
+							"            },\r",
+							"            \"required\": [\r",
+							"                \"body\",\r",
+							"                \"id\",\r",
+							"                \"title\",\r",
+							"                \"userId\"\r",
+							"            ],\r",
+							"            \"title\": \"WelcomeElement\"\r",
+							"        }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"//Obtención de la respuesta\r",
+							"var jsonData = pm.response;\r",
+							"\r",
+							"//Validación del código de respuesta\r",
+							"pm.test(\"Se completó la obtención de la respuesta\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//Validaciones aplicadas si se obtiene la respuesta completa\r",
+							"if(jsonData.code === 200){\r",
+							"\r",
+							"    //Validar cantidad de registros\r",
+							"    pm.test(\"El resultado devuelve 100 registros\", () => {\r",
+							"        pm.expect(jsonData.json().length).to.be.equals(100);\r",
+							"    });\r",
+							"\r",
+							"    //Validación de datos y estructura del resultado\r",
+							"    pm.test('Los registros devueltos tienen la estructura y los datos correctos', function() {\r",
+							"        pm.expect(tv4.validate(jsonData.json(), schemaRespuesta)).to.be.true;\r",
+							"    });\r",
+							"\r",
+							"    //Validación de los códigos de usuarios\r",
+							"    pm.test(\"Todos los códigos de los usuarios que publicaron los posts son válidos\", function () {\r",
+							"        for(var i=0; i<jsonData.json().length; i++){\r",
+							"            pm.expect(jsonData.json()[i].userId).to.be.greaterThan(0).lessThan(11);\r",
+							"        }\r",
+							"    });\r",
+							"\r",
+							"    //Validación de la publicación de los usuarios\r",
+							"    var validaPublicacionUsuarios = false;\r",
+							"    for(var i=1;i<=10;i++){\r",
+							"        validaPublicacionUsuarios = false;\r",
+							"        for(var j=0; j<jsonData.json().length; j++){\r",
+							"            if(jsonData.json()[j].userId === i){\r",
+							"                validaPublicacionUsuarios = true;\r",
+							"                break;\r",
+							"            }\r",
+							"        }\r",
+							"        if(validaPublicacionUsuarios === false){\r",
+							"            break;\r",
+							"        }\r",
+							"    }\r",
+							"    pm.test(\"Todos los usuarios han publicado al menos un (01) post\", function () {\r",
+							"        for(var i=0; i<jsonData.json().length; i++){\r",
+							"            pm.expect(validaPublicacionUsuarios).to.be.equals(true);\r",
+							"        }\r",
+							"    });\r",
+							"\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_URL}}/{{METODO}}",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"{{METODO}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validación de los datos de los comentarios",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"METODO\", \"comments\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Definición del esquema de la respuesta -> https://app.quicktype.io/\r",
+							"var schemaRespuesta = {\r",
+							"    \"$schema\": \"http://json-schema.org/draft-06/schema#\",\r",
+							"    \"type\": \"array\",\r",
+							"    \"items\": {\r",
+							"        \"$ref\": \"#/definitions/WelcomeElement\"\r",
+							"    },\r",
+							"    \"definitions\": {\r",
+							"        \"WelcomeElement\": {\r",
+							"            \"type\": \"object\",\r",
+							"            \"additionalProperties\": false,\r",
+							"            \"properties\": {\r",
+							"                \"postId\": {\r",
+							"                    \"type\": \"integer\"\r",
+							"                },\r",
+							"                \"id\": {\r",
+							"                    \"type\": \"integer\"\r",
+							"                },\r",
+							"                \"name\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"email\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                },\r",
+							"                \"body\": {\r",
+							"                    \"type\": \"string\"\r",
+							"                }\r",
+							"            },\r",
+							"            \"required\": [\r",
+							"                \"body\",\r",
+							"                \"email\",\r",
+							"                \"id\",\r",
+							"                \"name\",\r",
+							"                \"postId\"\r",
+							"            ],\r",
+							"            \"title\": \"WelcomeElement\"\r",
+							"        }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"//Obtención de la respuesta\r",
+							"var jsonData = pm.response;\r",
+							"\r",
+							"//Validación del código de respuesta\r",
+							"pm.test(\"Se completó la obtención de la respuesta\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//Validaciones aplicadas si se obtiene la respuesta completa\r",
+							"if(jsonData.code === 200){\r",
+							"\r",
+							"    //Validar cantidad de registros\r",
+							"    pm.test(\"El resultado devuelve 500 registros\", () => {\r",
+							"        pm.expect(jsonData.json().length).to.be.equals(500);\r",
+							"    });\r",
+							"\r",
+							"    //Validación de datos y estructura del resultado\r",
+							"    pm.test('Los registros devueltos tienen la estructura y los datos correctos', function() {\r",
+							"        pm.expect(tv4.validate(jsonData.json(), schemaRespuesta)).to.be.true;\r",
+							"    });\r",
+							"\r",
+							"    //Validación de los códigos de usuarios\r",
+							"    pm.test(\"Todos los códigos de los posts de los comentarios son válidos\", function () {\r",
+							"        for(var i=0; i<jsonData.json().length; i++){\r",
+							"            pm.expect(jsonData.json()[i].postId).to.be.greaterThan(0).lessThan(101);\r",
+							"        }\r",
+							"    });\r",
+							"\r",
+							"    //Validación de los comentarios por post\r",
+							"    var validaComentariosPost = false;\r",
+							"    for(var i=1;i<=100;i++){\r",
+							"        validaComentariosPost = false;\r",
+							"        for(var j=0; j<jsonData.json().length; j++){\r",
+							"            if(jsonData.json()[j].postId === i){\r",
+							"                validaComentariosPost = true;\r",
+							"                break;\r",
+							"            }\r",
+							"        }\r",
+							"        if(validaComentariosPost === false){\r",
+							"            break;\r",
+							"        }\r",
+							"    }\r",
+							"    pm.test(\"Todos los posts tienen al menos un (01) comentario\", function () {\r",
+							"        for(var i=0; i<jsonData.json().length; i++){\r",
+							"            pm.expect(validaComentariosPost).to.be.equals(true);\r",
+							"        }\r",
+							"    });\r",
+							"\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_URL}}/{{METODO}}",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"{{METODO}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "API_URL",
+			"value": "https://jsonplaceholder.typicode.com",
+			"type": "string"
+		},
+		{
+			"key": "CODIGO_USUARIO",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "METODO",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
